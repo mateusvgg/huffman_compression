@@ -31,12 +31,22 @@ class Encoder:
             freqs = sorted(freqs, key=lambda x: x[1])                                  
         return freqs[0]  
 
+    
+    def _remove_freq(self, freqs): 
+        ''' Remove recursively the frequency value of each node, leaving only the branches that follows from it '''                                              
+        freqs = freqs[0]                                                   
+        if isinstance(freqs, str):                                             
+            return freqs                                                   
+        else:                                                              
+            return (self._remove_freq(freqs[0]), self._remove_freq(freqs[1]))          
+
 
     def encode(self, file_path):
         # Generate a list with every byte read from the file
         bytes_array = [BitArray(byte).bin for byte in self._bitstuff.read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
-        return self._make_tree(freqs)
+        tree = self._make_tree(freqs)
+        return self._remove_freq(tree)
         # huff_codes = {}                                                      
                           
                                                                              # Probs contains the probabilities of each symbol
@@ -57,4 +67,3 @@ class Encoder:
 path = 'os_maias.txt'
 encoder = Encoder()
 tree = encoder.encode(path)
-print(tree)
