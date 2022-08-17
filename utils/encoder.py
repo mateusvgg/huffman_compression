@@ -11,7 +11,7 @@ class Encoder:
 
 
     def _get_freq_and_probs(self, bytes_array):  
-        ''' Compute the number of occurrences and thus the approximated probability of each byte '''
+        ''' Compute the number of occurrences and thus the approximated probability of each byte. '''
 
         freq_dict = Counter(bytes_array)
         freq = sorted(freq_dict.items(), key=lambda x: x[1])                 
@@ -21,7 +21,7 @@ class Encoder:
 
 
     def _make_tree(self, freqs): 
-        ''' Generate the Huffman tree by combining the elements with the lowest probability '''
+        ''' Generate the Huffman tree by combining the elements with the lowest probability. '''
 
         while len(freqs) > 1:                                                
             lowest_freq_elements = tuple(freqs[0:2])                                  
@@ -33,12 +33,22 @@ class Encoder:
 
     
     def _remove_freq(self, freqs): 
-        ''' Remove recursively the frequency value of each node, leaving only the branches that follows from it '''                                              
+        ''' Remove recursively the frequency value of each node, leaving only the branches that follows from it. '''                                              
         freqs = freqs[0]                                                   
         if isinstance(freqs, str):                                             
             return freqs                                                   
         else:                                                              
-            return (self._remove_freq(freqs[0]), self._remove_freq(freqs[1]))          
+            return (self._remove_freq(freqs[0]), self._remove_freq(freqs[1]))     
+
+
+    def _get_codes(self, branch, codes, pointer=''):
+        ''' Generate Huffman codes based on the Huffman tree. '''
+    
+        if isinstance(branch, str):                     
+            codes[branch] = pointer                 
+        else:                                     
+            self._get_codes(branch[0], codes, pointer + '0')
+            self._get_codes(branch[1], codes, pointer + '1')
 
 
     def encode(self, file_path):
@@ -46,9 +56,11 @@ class Encoder:
         bytes_array = [BitArray(byte).bin for byte in self._bitstuff.read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
         tree = self._make_tree(freqs)
-        return self._remove_freq(tree)
-        # huff_codes = {}                                                      
-                          
+        tree = self._remove_freq(tree)
+        huff_codes = {} 
+        self._get_codes(tree, huff_codes)                                                     
+        return freqs, huff_codes                      
+    
                                                                              # Probs contains the probabilities of each symbol
         # freq, probs = prepare_data(bytes_array)                               # freq is a list of tuples, each tuple contains (n_k, byte_k), where n_k is the number os occurences of byte_k in bytes_array
         # tree = make_tree(freq)                                               # The huffman tree. The tree is a tuple of tuples. Each tuple contains (freq, element), where freq is the number os occurrences of elements
@@ -66,4 +78,5 @@ class Encoder:
 
 path = 'os_maias.txt'
 encoder = Encoder()
-tree = encoder.encode(path)
+freqs, huff_codes = encoder.encode(path)
+print(freqs, '\n\n', sorted(huff_codes.items(), key=lambda x: len(x[1])))
