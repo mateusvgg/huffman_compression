@@ -1,3 +1,6 @@
 huffVenv/
+utils/__pycache__
 
 os_maias.txt
+arc.txt
+projeto_1_huffman_datacompression.py

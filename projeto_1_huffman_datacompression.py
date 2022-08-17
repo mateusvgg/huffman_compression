@@ -1,15 +1,3 @@
-# -*- coding: utf-8 -*-
-"""Projeto_1_Huffman_DataCompression.ipynb
-
-Original file is located at
-    https://colab.research.google.com/drive/1JrWkUQBLp6iAqppiaOQniFD9Ao-nrQ9_
-"""
-
-# This code corresponds to the first project of the subject "Signal Compression Foundation" 
-# from the Electrical Engineering Departament of Universidade de Brasília - UnB
-# The code author is:
-# Mateus Vieira Gonçalves - 18/0042831
-
 """#Importing and getting data"""
 import bitstring
 import math
@@ -17,13 +5,7 @@ from bitstring import BitArray, BitStream, Bits
 
 #All file paths
 
-path_dom = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/dom_casmurro.txt'
-path_lena = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/lena.bmp'
-path_f0 = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/fonte0.txt'
-path_f1 = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/fonte1.txt'
-path_f = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/fonte.txt'
-path_search = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/TEncSearch.txt'
-path_entropy = 'D:/Arquivos/Desktop/UnB/6º Semestre/Fundamentos de Compressão de Sinais/Projeto 1/TEncEntropy.txt'
+path_dom = 'os_maias.txt'
 
 paths = {'fonte': path_f, 'fonte0': path_f0, 'fonte1': path_f1, 'TEncSearch': path_search, 'TEncEntropy': path_entropy, 'Lena': path_lena, 'Dom Casmurro': path_dom}
 
