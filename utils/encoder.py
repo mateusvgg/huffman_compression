@@ -1,6 +1,7 @@
 from bitstuff import BitStuff
 from collections import Counter
 from bitstring import BitArray
+from tqdm import tqdm
 
 
 class Encoder:
@@ -16,26 +17,26 @@ class Encoder:
         freq = sorted(freq_dict.items(), key=lambda x: x[1])                 
         num_bytes = len(bytes_array)                                                                                       
         probs = {f[0] : float(f[1]/num_bytes) for f in freq}
-        return freq_dict, probs
+        return freq, probs
 
 
-    # def get_freq(freq_dict):                                               # Generate a list of tuples that contains (freq, byte)
-    #     symbols = freq_dict.keys()                                           # List of the possible bytes
-    #     freq = []                                                            # List that will have the tuples
+    def _make_tree(self, freqs): 
+        ''' Generate the Huffman tree by combining the elements with the lowest probability '''
 
-    #     for symbol in symbols:                                               # Iterate in each byte
-    #         freq.append((freq_dict[symbol], symbol))                           # Append the tuple (freq, byte)
-    #     freq.sort()                                                          # Sort the list in ascending order of frequency
-    #     return freq
-
-    # def prepare_data(array):                                               # Function to prepare the data
-    #   freq, probs = get_freq_and_probs(array)   
-    #   return get_freq(freq), probs
+        while len(freqs) > 1:                                                
+            lowest_freq_elements = tuple(freqs[0:2])                                  
+            combined_freq = lowest_freq_elements[0][1] + lowest_freq_elements[1][1]     
+            other_elements = freqs[2:]                                            
+            freqs = other_elements + [(lowest_freq_elements, combined_freq)]         
+            freqs = sorted(freqs, key=lambda x: x[1])                                  
+        return freqs[0]  
 
 
     def encode(self, file_path):
         # Generate a list with every byte read from the file
         bytes_array = [BitArray(byte).bin for byte in self._bitstuff.read_file_bytes(file_path)] 
+        freqs, probs = self._get_freq_and_probs(bytes_array)
+        return self._make_tree(freqs)
         # huff_codes = {}                                                      
                           
                                                                              # Probs contains the probabilities of each symbol
@@ -55,12 +56,5 @@ class Encoder:
 
 path = 'os_maias.txt'
 encoder = Encoder()
-freq_dict, probs = encoder.encode(path)
-print(freq_dict, '\n\n')
-print(sorted(probs.items(), key=lambda x: x[1]))
-num_bytes = sum(freq_dict.values())
-freq = freq_dict["01100001"]
-print(f'num_bytes = {num_bytes}')
-print(f'freq = {freq}')
-print(f'prob_test = {freq/num_bytes}')
-print(f'correct = {probs["01100001"]}')
+tree = encoder.encode(path)
+print(tree)
