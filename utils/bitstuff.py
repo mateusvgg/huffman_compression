@@ -4,7 +4,7 @@ from bitstring import BitArray, BitStream, Bits
 class BitStuff:
 
     def read_file_bytes(self, file_path):
-        ''' Reads the file in binary mode and return an operator yielding the bytes read '''
+        ''' Reads the file in binary mode and return an operator yielding the bytes read. '''
 
         with open(file_path, 'rb') as f:                                  
             while True:                                                   
@@ -12,4 +12,62 @@ class BitStuff:
                 if byte:                                                    
                     yield byte                                                
                 else:                                                       
-                    break                                                     
+                    break  
+
+    
+    def make_bitstream(self, bytes_array, codes):           
+        ''' Generate the corpus bitstream based on the file bytes and the corresponding Huffman Codes. '''
+
+        stream = ''                                     
+        for byte in bytes_array:                              
+            stream += codes[byte]                       
+        return stream  
+
+
+    def gen_header(self, codes):
+        ''' Generate the header information that carries 
+        the possible symbols and the corresponding codes. '''
+
+        header1 = ''                                                         # List with 0's and 1's, every position that has an 1 is a possible symbol
+        header2 = ''                                                         # List with the code size in 8 bits followed by the code
+
+        bytes_dict = {i : str(bin(i))[2:].zfill(8) for i in range(256)}         
+        possible_symbols = list(bytes_dict.values())                         # Every symbol between 00000000 and 11111111
+        actual_symbols = codes.keys()                                        # Only the symbols in the source
+
+        for symbol in possible_symbols:                                               
+              if symbol in actual_symbols:                                      
+                  code = codes[symbol]                                         
+                  binary_code_length = bytes_dict[len(code)]                     
+                  header1 += '1'                                         
+                  header2 = header2 + binary_code_length + code           
+              else:                                                      
+                  header1 += '0'                                         
+
+        return header1 + header2
+
+    
+    def gen_padding(self, stream):  
+        ''' Add padding info in the header and the padding bits at the end of the stream, if necessary. '''
+
+        stream_len = len(stream)                                             
+        rest = stream_len % 8  
+
+        if rest != 0:                                                      
+            num_bits_added = 8 - rest
+            num_bits_added_binary = str(bin(num_bits_added))[2:].zfill(4)
+            bits_to_add = '0' * num_bits_added
+            return '1111' + num_bits_added_binary + stream + bits_to_add  
+
+        return '11110000' + stream  
+
+
+    def write_file_from_stream(self, stream, file_name):       
+        ''' Write the bitstream to a file. '''
+
+        bitarray = BitArray()                                               
+        for i in range(0, len(stream), 8):                       
+            bitarray.append(BitStream('0b' + stream[i : i+8]))       
+        bitarray = Bits(bitarray)                                
+        with open(file_name, 'wb') as f:                         
+            bitarray.tofile(f)                                                   

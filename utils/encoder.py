@@ -52,31 +52,21 @@ class Encoder:
 
 
     def encode(self, file_path):
-        # Generate a list with every byte read from the file
         bytes_array = [BitArray(byte).bin for byte in self._bitstuff.read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
         tree = self._make_tree(freqs)
         tree = self._remove_freq(tree)
         huff_codes = {} 
-        self._get_codes(tree, huff_codes)                                                     
-        return freqs, huff_codes                      
-    
-                                                                             # Probs contains the probabilities of each symbol
-        # freq, probs = prepare_data(bytes_array)                               # freq is a list of tuples, each tuple contains (n_k, byte_k), where n_k is the number os occurences of byte_k in bytes_array
-        # tree = make_tree(freq)                                               # The huffman tree. The tree is a tuple of tuples. Each tuple contains (freq, element), where freq is the number os occurrences of elements
-        # tree = remove_freq(tree)                                             # The Huffman tree without the frequencies.                
-        # get_codes(tree, huff_codes)                                              # Recursive function to assign the codes to the symbols by traversing the tree
-        # stream = makeStream(bytes_array, huff_codes)                              # Make the compressed bitstream
-        # stream1 = makeHeader(stream, huff_codes)                                 # Append the Header to the bitstram
-        # stream2 = makePadding(stream1)                                       # Make padding if necessary
-        
-        # cName = file_path + '.huff'
-        # writeCompressed(stream2, cName)                                      # Make a binary file with the compressed array
-
-        # return bytes_array, stream, stream1, stream2, huff_codes, probs
+        self._get_codes(tree, huff_codes)  
+        corpus_stream = self._bitstuff.make_bitstream(bytes_array, huff_codes)
+        header_info = self._bitstuff.gen_header(huff_codes)         
+        stream = header_info + corpus_stream 
+        stream = self._bitstuff.gen_padding(stream)                                      
+        self._bitstuff.write_file_from_stream(stream, file_path + '.huff')
+        return stream                 
 
 
 path = 'os_maias.txt'
 encoder = Encoder()
-freqs, huff_codes = encoder.encode(path)
-print(freqs, '\n\n', sorted(huff_codes.items(), key=lambda x: len(x[1])))
+teste = encoder.encode(path)
+print(teste[:10])
