@@ -88,7 +88,9 @@ class BitStuffDecoder(ByteReader):
         super().__init__()       
 
 
-    def _split_stream(self, bytes_array):                              
+    def _split_stream(self, bytes_array):     
+        ''' Split the recieved stream in order to correctly retrieve the info sent. ''' 
+
         padding_info = bytes_array[0]
         last_byte = bytes_array[-1]
         symbols = [i for i in bytes_array[1:33]]  # The 256 bits of the header that cointains the info of what symbols are possible   
@@ -97,8 +99,18 @@ class BitStuffDecoder(ByteReader):
 
 
     def _treat_padding(self, padding_info, last_byte, stream_bytes):
+        ''' Remove the bits added to the final of the stream. '''
+
         num_bits_added_binary = padding_info[4:8]
         num_bits_added_dec = int(num_bits_added_binary, 2)
         last_byte = last_byte[:8-num_bits_added_dec] # Remove padding
         stream_bits = ''.join(byte for byte in stream_bytes)
         return stream_bits + last_byte  
+
+    
+    def _get_symbols(self, symbols_bytes):
+        ''' Retrieve the the source's possible symbols. '''
+
+        bitstream = ''.join(byte for byte in symbols_bytes)
+        symbols = [str(bin(index))[2:].zfill(8) for index, i in enumerate(bitstream) if i == '1']
+        return symbols
