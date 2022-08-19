@@ -2,7 +2,7 @@ import bitstring
 from bitstring import BitArray, BitStream, Bits
 
 
-class ByteReader:
+class ByteIO:
 
     def _read_file_bytes(self, file_path):
         ''' Reads the file in binary mode and return an operator yielding the bytes read. '''
@@ -28,7 +28,7 @@ class ByteReader:
 
 
 
-class BitStuffEncoder(ByteReader):
+class BitStuffEncoder(ByteIO):
 
     def __init__(self):
         super().__init__()
@@ -82,7 +82,7 @@ class BitStuffEncoder(ByteReader):
 
 
 
-class BitStuffDecoder(ByteReader):
+class BitStuffDecoder(ByteIO):
 
     def __init__(self):
         super().__init__()       
