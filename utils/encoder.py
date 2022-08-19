@@ -1,3 +1,4 @@
+import math
 from bitstuff import BitStuffEncoder
 from collections import Counter
 from bitstring import BitArray
@@ -49,6 +50,19 @@ class Encoder(BitStuffEncoder):
             self._get_codes(branch[0], codes, pointer + '0')
             self._get_codes(branch[1], codes, pointer + '1')
 
+    
+    def _get_avg_size_and_entropy(self, codes, probs):
+        ''' Compute the entropy of the source based on each symbol probability
+        obtained by relative frequency and the average code length. '''
+
+        entropy = [prob * math.log(prob, 2) for prob in probs.values()]
+        entropy = -sum(entropy)
+
+        avg_len = [prob * len(code) for prob, code in zip(probs.values(), codes.values())]
+        avg_len = sum(avg_len)
+
+        return entropy, avg_len
+
 
     def encode(self, file_path):
         ''' Compress the file with Huffman compression. '''
@@ -64,13 +78,10 @@ class Encoder(BitStuffEncoder):
         corpus_stream = self._make_bitstream(bytes_array, huff_codes)
         header_info = self._gen_header(huff_codes)         
         stream = header_info + corpus_stream 
-        stream = self._gen_padding(stream)                                      
-        
+        stream = self._gen_padding(stream)
+
+        entropy, avg_len = self._get_avg_size_and_entropy(huff_codes, probs)
+        print(f'Source Entropy = {round(entropy, 3)} bits')
+        print(f'Average Code Length Achieved = {round(avg_len, 3)} bits')
+
         self._write_file_from_stream(stream, file_path + '.huff')
-        return stream                 
-
-
-path = 'os_maias.txt'
-encoder = Encoder()
-teste = encoder.encode(path)
-print(teste[:10])

@@ -4,5 +4,14 @@ utils/__pycache__
 os_maias.txt
 os_maias.txt.huff
 rec_os_maias.txt
+
+dom_casmurro.txt
+dom_casmurro.txt.huff
+rec_dom_casmurro.txt
+
+lena_original.bmp
+lena_original.bmp.huff
+rec_lena_original.bmp
+
 arc.txt
 projeto_1_huffman_datacompression.py

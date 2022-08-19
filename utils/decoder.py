@@ -18,8 +18,3 @@ class Decoder(BitStuffDecoder):
         bitstream, huff_codes = self._get_codes(symbols, bitstream)
         original_bitstream = self._get_original_bitstream(bitstream, huff_codes)
         self._write_file_from_stream(original_bitstream, 'rec_' + file_path.replace('.huff', ''))
-
-
-path = 'os_maias.txt.huff'
-decoder = Decoder()
-original_bitstream = decoder.decode(path)
