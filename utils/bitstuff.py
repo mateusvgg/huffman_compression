@@ -78,4 +78,11 @@ class BitStuffEncoder(ByteReader):
             bitarray.append(BitStream('0b' + stream[i : i+8]))       
         bitarray = Bits(bitarray)                                
         with open(file_name, 'wb') as f:                         
-            bitarray.tofile(f)                                                   
+            bitarray.tofile(f)         
+
+
+
+class BitStuffDecoder(ByteReader):
+
+    def __init__(self):
+        super().__init__()                                          
