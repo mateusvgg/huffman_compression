@@ -114,3 +114,21 @@ class BitStuffDecoder(ByteReader):
         bitstream = ''.join(byte for byte in symbols_bytes)
         symbols = [str(bin(index))[2:].zfill(8) for index, i in enumerate(bitstream) if i == '1']
         return symbols
+
+    
+    def _get_codes(self, symbols, bitstream):
+        ''' Generate the Huffman codes based on the header information. '''
+
+        pointer = 0
+        huff_codes = {}
+        for i in range(len(symbols)):
+          code_len = int(bitstream[pointer:pointer+8], 2)
+          pointer += 8
+          # Save the corresponding symbol code in the dictionary, note
+          # that the codes are in ascending order of decimal representation
+          # in the same way that it was put in the stream by the encoder,
+          # this allows the indexing symbols[i].
+          huff_codes[symbols[i]] = bitstream[pointer:pointer+code_len] 
+          pointer += code_len
+
+        return bitstream[pointer:], huff_codes
