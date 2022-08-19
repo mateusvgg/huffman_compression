@@ -1,6 +1,7 @@
 import bitstring
 from bitstring import BitArray, BitStream, Bits
 
+
 class ByteReader:
 
     def _read_file_bytes(self, file_path):

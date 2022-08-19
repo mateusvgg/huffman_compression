@@ -1,7 +1,6 @@
 from bitstuff import BitStuffEncoder
 from collections import Counter
 from bitstring import BitArray
-from tqdm import tqdm
 
 
 class Encoder(BitStuffEncoder):
@@ -54,14 +53,17 @@ class Encoder(BitStuffEncoder):
     def encode(self, file_path):
         bytes_array = [BitArray(byte).bin for byte in self._read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
+        
         tree = self._make_tree(freqs)
         tree = self._remove_freq(tree)
         huff_codes = {} 
         self._get_codes(tree, huff_codes)  
+        
         corpus_stream = self._make_bitstream(bytes_array, huff_codes)
         header_info = self._gen_header(huff_codes)         
         stream = header_info + corpus_stream 
         stream = self._gen_padding(stream)                                      
+        
         self._write_file_from_stream(stream, file_path + '.huff')
         return stream                 
 
