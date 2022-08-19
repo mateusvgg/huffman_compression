@@ -85,4 +85,20 @@ class BitStuffEncoder(ByteReader):
 class BitStuffDecoder(ByteReader):
 
     def __init__(self):
-        super().__init__()                                          
+        super().__init__()       
+
+
+    def _split_stream(self, bytes_array):                              
+        padding_info = bytes_array[0]
+        last_byte = bytes_array[-1]
+        symbols = [i for i in bytes_array[1:33]]  # The 256 bits of the header that cointains the info of what symbols are possible   
+        stream = bytes_array[33:-1]
+        return padding_info, last_byte, symbols, stream
+
+
+    def _treat_padding(self, padding_info, last_byte, stream_bytes):
+        num_bits_added_binary = padding_info[4:8]
+        num_bits_added_dec = int(num_bits_added_binary, 2)
+        last_byte = last_byte[:8-num_bits_added_dec] # Remove padding
+        stream_bits = ''.join(byte for byte in stream_bytes)
+        return stream_bits + last_byte  
