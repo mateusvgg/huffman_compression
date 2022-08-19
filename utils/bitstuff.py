@@ -16,6 +16,17 @@ class ByteReader:
                     break 
 
 
+    def _write_file_from_stream(self, stream, file_name):       
+        ''' Write the bitstream to a file. '''
+
+        bitarray = BitArray()                                               
+        for i in range(0, len(stream), 8):                       
+            bitarray.append(BitStream('0b' + stream[i : i+8]))       
+        bitarray = Bits(bitarray)                                
+        with open(file_name, 'wb') as f:                         
+            bitarray.tofile(f)      
+
+
 
 class BitStuffEncoder(ByteReader):
 
@@ -70,17 +81,6 @@ class BitStuffEncoder(ByteReader):
         return '11110000' + stream  
 
 
-    def _write_file_from_stream(self, stream, file_name):       
-        ''' Write the bitstream to a file. '''
-
-        bitarray = BitArray()                                               
-        for i in range(0, len(stream), 8):                       
-            bitarray.append(BitStream('0b' + stream[i : i+8]))       
-        bitarray = Bits(bitarray)                                
-        with open(file_name, 'wb') as f:                         
-            bitarray.tofile(f)         
-
-
 
 class BitStuffDecoder(ByteReader):
 
@@ -132,3 +132,16 @@ class BitStuffDecoder(ByteReader):
           pointer += code_len
 
         return bitstream[pointer:], huff_codes
+
+    
+    def _get_original_bitstream(self, bitstream, huff_codes):
+        ''' Retrieve the original file bitstream. '''
+
+        codes_huff = {value : key for key, value in huff_codes.items()}
+        original, buffer = '', ''
+        for bit in bitstream:
+            buffer += bit
+            if buffer in codes_huff.keys():
+                original += codes_huff[buffer]
+                buffer = ''
+        return original

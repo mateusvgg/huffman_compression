@@ -15,10 +15,10 @@ class Decoder(BitStuffDecoder):
         bitstream = self._treat_padding(padding_info, last_byte, bitstream)
         symbols = self._get_symbols(symbols_bytes)
         bitstream, huff_codes = self._get_codes(symbols, bitstream)
-        return bitstream, huff_codes
+        original_bitstream = self._get_original_bitstream(bitstream, huff_codes)
+        self._write_file_from_stream(original_bitstream, 'rec_' + file_path.replace('.huff', ''))
 
 
 path = 'os_maias.txt.huff'
 decoder = Decoder()
-bitstream, huff_codes = decoder.decode(path)
-print(sorted(list(huff_codes.items()), key=lambda x:len(x[1])))
+original_bitstream = decoder.decode(path)
