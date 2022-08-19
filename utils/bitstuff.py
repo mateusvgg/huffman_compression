@@ -1,9 +1,9 @@
 import bitstring
 from bitstring import BitArray, BitStream, Bits
 
-class BitStuff:
+class ByteReader:
 
-    def read_file_bytes(self, file_path):
+    def _read_file_bytes(self, file_path):
         ''' Reads the file in binary mode and return an operator yielding the bytes read. '''
 
         with open(file_path, 'rb') as f:                                  
@@ -12,10 +12,17 @@ class BitStuff:
                 if byte:                                                    
                     yield byte                                                
                 else:                                                       
-                    break  
+                    break 
+
+
+
+class BitStuffEncoder(ByteReader):
+
+    def __init__(self):
+        super().__init__()
 
     
-    def make_bitstream(self, bytes_array, codes):           
+    def _make_bitstream(self, bytes_array, codes):           
         ''' Generate the corpus bitstream based on the file bytes and the corresponding Huffman Codes. '''
 
         stream = ''                                     
@@ -24,7 +31,7 @@ class BitStuff:
         return stream  
 
 
-    def gen_header(self, codes):
+    def _gen_header(self, codes):
         ''' Generate the header information that carries 
         the possible symbols and the corresponding codes. '''
 
@@ -47,7 +54,7 @@ class BitStuff:
         return header1 + header2
 
     
-    def gen_padding(self, stream):  
+    def _gen_padding(self, stream):  
         ''' Add padding info in the header and the padding bits at the end of the stream, if necessary. '''
 
         stream_len = len(stream)                                             
@@ -62,7 +69,7 @@ class BitStuff:
         return '11110000' + stream  
 
 
-    def write_file_from_stream(self, stream, file_name):       
+    def _write_file_from_stream(self, stream, file_name):       
         ''' Write the bitstream to a file. '''
 
         bitarray = BitArray()                                               
