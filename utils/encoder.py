@@ -51,6 +51,8 @@ class Encoder(BitStuffEncoder):
 
 
     def encode(self, file_path):
+        ''' Compress the file with Huffman compression. '''
+
         bytes_array = [BitArray(byte).bin for byte in self._read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
         

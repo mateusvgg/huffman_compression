@@ -1,5 +1,4 @@
 from bitstuff import BitStuffDecoder
-from collections import Counter
 from bitstring import BitArray
 
 
@@ -10,6 +9,8 @@ class Decoder(BitStuffDecoder):
 
     
     def decode(self, file_path):
+        ''' Decompress the file by reversing the steps from the encoder. '''
+
         bytes_array = [BitArray(byte).bin for byte in self._read_file_bytes(file_path)] 
         padding_info, last_byte, symbols_bytes, bitstream = self._split_stream(bytes_array)
         bitstream = self._treat_padding(padding_info, last_byte, bitstream)
