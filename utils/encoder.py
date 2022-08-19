@@ -1,5 +1,6 @@
 import math
-from bitstuff import BitStuffEncoder
+from pathlib import Path
+from utils.bitstuff import BitStuffEncoder
 from collections import Counter
 from bitstring import BitArray
 
@@ -67,6 +68,8 @@ class Encoder(BitStuffEncoder):
     def encode(self, file_path):
         ''' Compress the file with Huffman compression. '''
 
+        print(f'Compressing {file_path} ...\n')
+
         bytes_array = [BitArray(byte).bin for byte in self._read_file_bytes(file_path)] 
         freqs, probs = self._get_freq_and_probs(bytes_array)
         
@@ -82,6 +85,15 @@ class Encoder(BitStuffEncoder):
 
         entropy, avg_len = self._get_avg_size_and_entropy(huff_codes, probs)
         print(f'Source Entropy = {round(entropy, 3)} bits')
-        print(f'Average Code Length Achieved = {round(avg_len, 3)} bits')
+        print(f'Average Code Length Achieved = {round(avg_len, 3)} bits\n')
 
-        self._write_file_from_stream(stream, file_path + '.huff')
+        compressed_path = file_path + '.huff'
+        self._write_file_from_stream(stream, compressed_path)
+
+        original_size = Path(file_path).stat().st_size
+        compressed_size = Path(compressed_path).stat().st_size
+        print(f'Original file size = {original_size} bytes')
+        print(f'Compressed file size = {compressed_size} bytes')
+        print(f'Compression Rate = {round((original_size / compressed_size), 3)}\n')
+
+        print(f"Compressed file at {compressed_path}")
