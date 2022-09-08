@@ -59,7 +59,7 @@ class Encoder(BitStuffEncoder):
         entropy = [prob * math.log(prob, 2) for prob in probs.values()]
         entropy = -sum(entropy)
 
-        avg_len = [prob * len(code) for prob, code in zip(probs.values(), codes.values())]
+        avg_len = [probs[byte] * len(codes[byte]) for byte in codes.keys()]
         avg_len = sum(avg_len)
 
         return entropy, avg_len
