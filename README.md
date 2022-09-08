@@ -4,7 +4,8 @@ This repository contains the code for the final project of Information Theory, f
 
 * **Authors**:
 Mateus Vieira Gonçalves - 18/0042831<sup>1</sup>,
-Paulo Guinancio Bacchini de Araujo Lima - 18/0067222<sup>1</sup>  
+Paulo Guinancio Bacchini de Araujo Lima - 18/0067222<sup>1</sup>,  
+Felipe Rodrigues Cardoso Braga - 180041711<sup>1</sup>  
 <sup>1</sup> University of Brasília, Department of Electrical Engineering, Brazil 
 
 -------------------------
