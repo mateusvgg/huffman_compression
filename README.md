@@ -12,7 +12,7 @@ Felipe Rodrigues Cardoso Braga - 180041711<sup>1</sup>
 
 ## Prerequisites
 
-* Python 3.8.5
+* Tests were performed using Python 3.8.5
 * Packages in `requirements.txt`
 
 ## Usage
